@@ -4,13 +4,13 @@ import pandas as pd
 
 '''
     This class has been created to reunite the datasets and to get a specific 
-    signal in a easy way. The path is needed to be setted according to the
+    signal in a easy way. The __path is needed to be setted according to the
     location of the .h5 files.
 
 '''
 
 class Load:
-    path = r"Database"
+    __path = r"Database"
     def __init__(self, name, building, dataset):
         
         self._dataset = 0
@@ -30,9 +30,9 @@ class Load:
     @dataset.setter
     def dataset(self, value):       
         if value.lower() == "redd".lower():
-            temp = DataSet(Load.path + r'\redd.h5')
+            temp = DataSet(Load.__path + r'\redd.h5')
         elif value.lower() == "synd".lower():
-            temp = DataSet(Load.path + r'\SynD.h5')
+            temp = DataSet(Load.__path + r'\SynD.h5')
         else:
             raise Exception("Invalid dataset. Please insert a valid argument.")
         self.data = next(temp.buildings[self.building].elec[self.name].power_series())
@@ -67,11 +67,16 @@ class Load:
     def set_path(value):
         # It should be a String
         if type(value) is not str:                          
-            raise ValueError("Please, insert the path as a String.")
+            raise ValueError("Please, insert the __path as a String.")
         else:
             import os.path
-            # It should be a valid existing path
+            # It should be a valid existing __path
             if os.path.isdir(value):
-                Load.path = value
+                Load.__path = value
             else:
-                raise ValueError("Please, choose a valid path.")
+                raise ValueError("Please, choose a valid __path.")
+    
+    # Path getter
+    @staticmethod
+    def show_path():
+        return Load.__path
