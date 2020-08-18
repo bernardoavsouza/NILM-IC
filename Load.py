@@ -10,34 +10,29 @@ import pandas as pd
 '''
 
 class Load:
+    path = r"Database"
     def __init__(self, name, building, dataset):
-        self._path = 0
+        
         self._dataset = 0
         self._name = 0
         self._data = pd.DataFrame()
         self._building = building
         
         self.name = name
-        self.path = r"C:\Users\Noudy\Desktop"
+        
         self.dataset = dataset
         
-    # Getters and setters    
-    @property
-    def path(self):
-        return self._path
-    @path.setter
-    def path(self, value):
-        self._path = value
-        
+    
+    # Getters and setters      
     @property
     def dataset(self):
         return self._dataset     
     @dataset.setter
-    def dataset(self, value):
+    def dataset(self, value):       
         if value.lower() == "redd".lower():
-            temp = DataSet(self.path + r'\redd.h5')
+            temp = DataSet(Load.path + r'\redd.h5')
         elif value.lower() == "synd".lower():
-            temp = DataSet(self.path + r'\SynD.h5')
+            temp = DataSet(Load.path + r'\SynD.h5')
         else:
             raise Exception("Invalid dataset. Please insert a valid argument.")
         self.data = next(temp.buildings[self.building].elec[self.name].power_series())
@@ -66,3 +61,17 @@ class Load:
     # Ploting the signal
     def plot(self):
         plt.plot(self.data)
+    
+    # Path setter
+    @staticmethod
+    def set_path(value):
+        # It should be a String
+        if type(value) is not str:                          
+            raise ValueError("Please, insert the path as a String.")
+        else:
+            import os.path
+            # It should be a valid existing path
+            if os.path.isdir(value):
+                Load.path = value
+            else:
+                raise ValueError("Please, choose a valid path.")
