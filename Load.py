@@ -9,7 +9,7 @@ import pandas as pd
 
 '''
 
-class Load:
+class Appliance:
     __path = r"Database"
     def __init__(self, name, building, dataset):
         
@@ -30,9 +30,9 @@ class Load:
     @dataset.setter
     def dataset(self, value):       
         if value.lower() == "redd".lower():
-            temp = DataSet(Load.__path + r'\redd.h5')
+            temp = DataSet(Appliance.__path + r'\redd.h5')
         elif value.lower() == "synd".lower():
-            temp = DataSet(Load.__path + r'\SynD.h5')
+            temp = DataSet(Appliance.__path + r'\SynD.h5')
         else:
             raise Exception("Invalid dataset. Please insert a valid argument.")
         self.data = next(temp.buildings[self.building].elec[self.name].power_series())
@@ -72,11 +72,36 @@ class Load:
             import os.path
             # It should be a valid existing __path
             if os.path.isdir(value):
-                Load.__path = value
+                Appliance.__path = value
             else:
                 raise ValueError("Please, choose a valid __path.")
     
     # Path getter
     @staticmethod
     def show_path():
-        return Load.__path
+        return Appliance.__path
+    
+    def split(self, train_size=None, test_size=None):
+        # This method splits the signal in train and test
+        
+        from sklearn.model_selection import train_test_split
+        
+        # Catching errors
+        if train_size == None and test_size == None:
+            raise ValueError ("Invalid values of train and/or test.")
+        if train_size != None and test_size != None:
+            if train_size + test_size != 1:
+                raise ValueError ("Invalid values of train and/or test.")
+        
+        # Assign values
+        if train_size == None:
+            train_size = 1 - test_size
+        if test_size == None:
+            test_size = 1 - train_size
+        
+        train, test = train_test_split(self.data, test_size=test_size, train_size=train_size)
+        return train, test
+    
+    
+    
+    
