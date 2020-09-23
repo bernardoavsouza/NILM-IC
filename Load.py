@@ -35,7 +35,14 @@ class Appliance:
             temp = DataSet(Appliance.__path + r'\SynD.h5')
         else:
             raise Exception("Invalid dataset. Please insert a valid argument.")
-        self.data = next(temp.buildings[self.building].elec[self.name].power_series())
+        
+        # Verifying if it has more than one instance. If true, it takes the first one
+        instance = temp.buildings[self.building].elec[self.name].instance()
+        if type(instance) == int:
+            self.data = next(temp.buildings[self.building].elec[self.name].power_series())
+        elif type(instance) == tuple:
+            self.data = next(temp.buildings[self.building].elec[self.name][instance[0]].power_series())
+            
     
     @property
     def name(self):
