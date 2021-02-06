@@ -11,7 +11,7 @@ class InputSignal:
         self._level = 0
         self._fig = []
         self._kind = kind
-        self. _details = None
+        self._details = None
         self._approx = None
         
         self.level = level
@@ -79,7 +79,7 @@ class InputSignal:
             return self._approx
         
        
-    def kind_show(self):
+    def kind_show():
         # This function shows the kinds of discrete wavelets available
         
         kindlist = pywt.wavelist(kind='discrete')

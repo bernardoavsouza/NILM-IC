@@ -36,13 +36,33 @@ class Appliance:
         else:
             raise Exception("Invalid dataset. Please insert a valid argument.")
         
-        # Verifying if it has more than one instance. If true, it takes the first one
-        instance = temp.buildings[self.building].elec[self.name].instance()
-        if type(instance) == int:
-            self.data = next(temp.buildings[self.building].elec[self.name].power_series())
-        elif type(instance) == tuple:
-            self.data = next(temp.buildings[self.building].elec[self.name][instance[0]].power_series())
-            
+        # If self.building is list (or a tuple), self.data will be a list of series, taking every instance.
+        # If self.building is int, self.data will be a series, taking just one signal.
+        if type(self.building) == int:
+            try:
+                # Verifying if it has more than one instance. If true, it takes the first one
+                instance = temp.buildings[self.building].elec[self.name].instance()
+                if type(instance) == int:
+                    self.data = next(temp.buildings[self.building].elec[self.name].power_series())
+                elif type(instance) == tuple:
+                    self.data = next(temp.buildings[self.building].elec[self.name][instance[0]].power_series())
+            except KeyError:
+                raise KeyError("Please insert a valid appliance name or house number.")   
+        
+        elif type(self.building) == list or type(self.building) == tuple:
+            self.data = []
+            for h in range(len(self.building)):    
+                try:
+                    instance = temp.buildings[self.building[h]].elec[self.name].instance()
+                    if type(instance) == int:
+                        self.data.append(next(temp.buildings[self.building[h]].elec[self.name].power_series()))
+                    elif type(instance) == tuple:
+                        for i in range(len(instance)):
+                            self.data.append(next(temp.buildings[self.building[h]].elec[self.name][instance[i]].power_series()))
+                except KeyError:
+                    raise KeyError("Please insert a valid appliance name or house number.")
+        else:
+            raise KeyError("Please inser a valid house number format.")
     
     @property
     def name(self):
